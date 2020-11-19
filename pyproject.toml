@@ -1,9 +1,13 @@
 [tool.poetry]
-name = "seabird"
+name = "python-seabird"
 version = "0.1.0"
 description = ""
 authors = ["Kaleb Elwert <belak@coded.io>"]
 license = "MIT"
+packages = [
+    { include = "seabird" },
+]
+include = ["LICENSE", "README.md"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
