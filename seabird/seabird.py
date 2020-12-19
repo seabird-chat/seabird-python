@@ -216,6 +216,9 @@ class BackendInfoRequest(betterproto.Message):
 @dataclass
 class BackendInfoResponse(betterproto.Message):
     backend: common.Backend = betterproto.message_field(1)
+    metadata: Dict[str, str] = betterproto.map_field(
+        2, betterproto.TYPE_STRING, betterproto.TYPE_STRING
+    )
 
 
 @dataclass
@@ -261,6 +264,19 @@ class CoreInfoResponse(betterproto.Message):
     """Metadata about the running core instance."""
 
     startup_timestamp: int = betterproto.uint64_field(1)
+    current_timestamp: int = betterproto.uint64_field(2)
+
+
+@dataclass
+class CommandsRequest(betterproto.Message):
+    pass
+
+
+@dataclass
+class CommandsResponse(betterproto.Message):
+    commands: Dict[str, "CommandMetadata"] = betterproto.map_field(
+        1, betterproto.TYPE_STRING, betterproto.TYPE_MESSAGE
+    )
 
 
 class SeabirdStub(betterproto.ServiceStub):
@@ -422,4 +438,13 @@ class SeabirdStub(betterproto.ServiceStub):
             "/seabird.Seabird/GetCoreInfo",
             request,
             CoreInfoResponse,
+        )
+
+    async def registered_commands(self) -> CommandsResponse:
+        request = CommandsRequest()
+
+        return await self._unary_unary(
+            "/seabird.Seabird/RegisteredCommands",
+            request,
+            CommandsResponse,
         )
